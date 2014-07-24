@@ -1,0 +1,17 @@
+{
+    "name": "ideato/star-rating-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony Bundle for simple Star Rating System",
+    "keywords": ["symfony", "ideato", "star-rating"],
+    "homepage": "http://github.com/ideatosrl/StarRatingBundle",
+    "license": ["MIT"],
+    "require": {
+        "php": ">=5.3.2",
+        "doctrine/orm": "~2.2,>=2.2.3"
+    },
+    "autoload": {
+        "psr-0": { "Ideato\\StarRatingBundle": "" }
+    },
+    "target-dir": "Ideato/StarRatingBundle",
+    "minimum-stability": "dev"
+}
