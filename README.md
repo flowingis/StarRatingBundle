@@ -22,9 +22,3 @@ StarRatingBundle
 
 * Add new table for registering single rate
 * Prevent multiple vote
-
-
-## TODO SIMONE
-- test
-- installazione
-- gestione errori inserimento nel database
