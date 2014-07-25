@@ -3,7 +3,7 @@
  * Base Exception Class
  */
 
-namespace Ideato\StarRatingBundle\StarRating\Exception;
+namespace Ideato\StarRatingBundle\Exception;
 
 
 class Exception extends \Exception {

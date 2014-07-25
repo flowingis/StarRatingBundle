@@ -5,13 +5,14 @@
  *
  */
 
-namespace Ideato\StarRatingBundle\StarRating;
+namespace Ideato\StarRatingBundle\Service;
 
 use Ideato\StarRatingBundle\Entity\Rating;
+use Ideato\StarRatingBundle\Exception;
 use Doctrine\ORM\EntityManager;
 
 
-class StarRating {
+class StarRatingService {
 
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -39,14 +40,14 @@ class StarRating {
      * Load rating
      *
      * @param $contentId
-     * @throws \Exception
+     * @throws NotFoundException
      * @return null|object
      */
     public function load( $contentId ) {
         $rating = $this->repository->find($contentId);
 
         if( !$rating ) {
-            throw new Exception\NotFoundException (
+            throw new NotFoundException (
                 'No content found for id: '. $contentId
             );
         }
@@ -63,7 +64,7 @@ class StarRating {
     public function getAverage( $contentId ) {
         try {
             return $this->load( $contentId )->getAverage();
-        } catch( Exception\NotFoundException $e ) {
+        } catch( NotFoundException $e ) {
             return 0.0;
         }
     }
@@ -74,21 +75,21 @@ class StarRating {
      *
      * @param $contentId
      * @param $score
+     * @throws InvalidArgumentException
      * @return float
-     * @throws Exception\InvalidArgumentException
      */
     public function save( $contentId, $score )
     {
         if( !$contentId ) {
-            throw new Exception\InvalidArgumentException('$contentId not provided');
+            throw new InvalidArgumentException('$contentId not provided');
         }
 
         if( !$score ) {
-            throw new Exception\InvalidArgumentException('$score value not provided');
+            throw new InvalidArgumentException('$score value not provided');
         }
 
         if( $score < 0 || $score > 5 ) {
-            throw new Exception\InvalidArgumentException('$score value not valid. Valid values are between 0 and 5');
+            throw new InvalidArgumentException('$score value not valid. Valid values are between 0 and 5');
         }
 
         try {
@@ -103,7 +104,7 @@ class StarRating {
             $rating->setTotalcount( $totalCount );
             $rating->setAverage( $average );
             $this->em->flush();
-        } catch( Exception\NotFoundException $e ) {
+        } catch( NotFoundException $e ) {
             //create a new one
             $rating = new Rating();
             $rating->setId($contentId);

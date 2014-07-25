@@ -1,5 +1,5 @@
 parameters:
-    ideato_starrating.starrating_service_class: Ideato\StarRatingBundle\StarRating\StarRating
+    ideato_starrating.starrating_service_class: Ideato\StarRatingBundle\Service\StarRatingService
 
 services:
     ideato_starrating_service:

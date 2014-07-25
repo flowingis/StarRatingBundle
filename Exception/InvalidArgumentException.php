@@ -3,7 +3,7 @@
  * Not Found Exception Class
  */
 
-namespace Ideato\StarRatingBundle\StarRating\Exception;
+namespace Ideato\StarRatingBundle\Exception;
 
 
 class InvalidArgumentException extends Exception {
