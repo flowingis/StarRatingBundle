@@ -3,9 +3,8 @@
 namespace Ideato\StarRatingBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Ideato\StarRatingBundle\Entity\Rating;
+use Ideato\StarRatingBundle\StarRating\Exception;
 
 class StarRatingController extends Controller
 {
@@ -30,42 +29,14 @@ class StarRatingController extends Controller
         $contentId = (int)$request->request->get('contentId');
         $score = (float)$request->request->get('score');
 
-        if( !$contentId ) {
-            throw $this->createNotFoundException('$contentId not provided');
-        }
-
-        if( !$score ) {
-            throw $this->createNotFoundException('$score value not provided');
-        }
-
-        if( $score < 0 || $score > 5 ) {
-            throw new BadRequestHttpException('$score value not valid. Valid values are between 0 and 5');
-        }
-
-        $rating = $this->getRepository()->find($contentId);
-        if( !$rating ) {
-            //new record
-            $rating = new Rating();
-            $rating->setId($contentId);
-            $rating->setCount( 1 );
-            $rating->setTotalcount( $score );
-            $rating->setAverage( $score );
-            $average = $score;
-
-            $em->persist($rating);
-            $em->flush();
-        } else {
-            //update record
-            $count = $rating->getCount() + 1;
-            $totalCount = $rating->getTotalcount() + $score;
-            $average = $totalCount / $count;
-
-            $rating->setCount( $count );
-            $rating->setTotalcount( $totalCount );
-            $rating->setAverage( $average );
-            $em->flush();
-        }
-
+//        try {
+            $starrating = $this->get('ideato_starrating_service');
+            $average = $starrating->save( $contentId, $score );
+//        } catch( Exception\NotFoundException $e ) {
+//            $average = -1;
+//        } catch( Exception\InvalidArgumentException $e ) {
+//            $average = -1;
+//        }
 
         $response = new Response();
         return $response->setContent($average);
@@ -79,8 +50,8 @@ class StarRatingController extends Controller
      */
     public function displayRateAction( $contentId )
     {
-        $rating = $this->getRepository()->find($contentId);
-        $average = $rating ? $rating->getAverage() : 0.0;
+        $starrating = $this->get('ideato_starrating_service');
+        $average = $starrating->getAverage( $contentId );
 
         return $this->render(
             "IdeatoStarRatingBundle:StarRating:rate.html.twig",
@@ -91,18 +62,4 @@ class StarRatingController extends Controller
         );
     }
 
-    /**
-     * Return the Star Rating entity repository
-     *
-     * @return \Doctrine\ORM\EntityRepository
-     */
-    protected function getRepository()
-    {
-        if( !$this->repository ) {
-            $this->repository = $this->getDoctrine()
-                                     ->getRepository('IdeatoStarRatingBundle:Rating');
-        }
-
-        return $this->repository;
-    }
 }

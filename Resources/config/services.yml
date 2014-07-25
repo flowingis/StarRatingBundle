@@ -1,4 +1,8 @@
 parameters:
-
+    ideato_starrating.starrating_service_class: Ideato\StarRatingBundle\StarRating\StarRating
 
 services:
+    ideato_starrating_service:
+        class: "%ideato_starrating.starrating_service_class%"
+        arguments:
+            entityManager: "@doctrine.orm.entity_manager"
