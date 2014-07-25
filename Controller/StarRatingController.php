@@ -18,6 +18,8 @@ class StarRatingController extends Controller
     /**
      * Return the result of rating action
      *
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @return Response
      */
     public function rateAction()
