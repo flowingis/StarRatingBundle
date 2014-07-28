@@ -160,5 +160,17 @@ class StarRatingService {
     }
 
 
+    /**
+     * Retrieve most voted elements
+     *
+     * @param int $limit
+     * @return \Ideato\StarRatingBundle\Entity\Rating[]
+     */
+    public function getMostRated( $limit = 20 ) {
+        $query = $this->em->createQuery('SELECT r FROM Ideato\StarRatingBundle\Entity\Rating r ORDER BY r.count DESC');
+        $query->setMaxResults( $limit );
+
+        return $query->getResult();
+    }
 
 }
