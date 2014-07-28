@@ -22,3 +22,9 @@ StarRatingBundle
 
 * Add new table for registering single rate
 * Prevent multiple vote
+
+
+## TODO SIMONE
+- test
+X eccezioni
+- gestire meglio js/controller

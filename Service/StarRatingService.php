@@ -40,14 +40,14 @@ class StarRatingService {
      * Load rating
      *
      * @param $contentId
-     * @throws NotFoundException
+     * @throws Exception\NotFoundException
      * @return null|object
      */
     public function load( $contentId ) {
         $rating = $this->repository->find($contentId);
 
         if( !$rating ) {
-            throw new NotFoundException (
+            throw new Exception\NotFoundException (
                 'No content found for id: '. $contentId
             );
         }
@@ -64,7 +64,7 @@ class StarRatingService {
     public function getAverage( $contentId ) {
         try {
             return $this->load( $contentId )->getAverage();
-        } catch( NotFoundException $e ) {
+        } catch( Exception\NotFoundException $e ) {
             return 0.0;
         }
     }
@@ -75,21 +75,21 @@ class StarRatingService {
      *
      * @param $contentId
      * @param $score
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      * @return float
      */
     public function save( $contentId, $score )
     {
         if( !$contentId ) {
-            throw new InvalidArgumentException('$contentId not provided');
+            throw new Exception\InvalidArgumentException('$contentId not provided');
         }
 
         if( !$score ) {
-            throw new InvalidArgumentException('$score value not provided');
+            throw new Exception\InvalidArgumentException('$score value not provided');
         }
 
         if( $score < 0 || $score > 5 ) {
-            throw new InvalidArgumentException('$score value not valid. Valid values are between 0 and 5');
+            throw new Exception\InvalidArgumentException('$score value not valid. Valid values are between 0 and 5');
         }
 
         try {
@@ -104,7 +104,7 @@ class StarRatingService {
             $rating->setTotalcount( $totalCount );
             $rating->setAverage( $average );
             $this->em->flush();
-        } catch( NotFoundException $e ) {
+        } catch( Exception\NotFoundException $e ) {
             //create a new one
             $rating = new Rating();
             $rating->setId($contentId);

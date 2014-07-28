@@ -3,6 +3,8 @@
 namespace Ideato\StarRatingBundle\Tests\Controller;
 
 use Ideato\StarRatingBundle\Service\StarRatingService;
+use Ideato\StarRatingBundle\Entity\Rating;
+use Ideato\StarRatingBundle\Exception;
 
 
 class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
@@ -33,11 +35,13 @@ class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
             ->getMock();
     }
 
-
+    /**
+     *
+     */
     public function testLoad()
     {
         $id = 7700;
-        $object = new \stdClass();
+        $object = new Rating();
 
         $this->repository->expects($this->atLeastOnce())
                 ->method('find')
