@@ -24,19 +24,12 @@ class StarRatingController extends Controller
     public function rateAction()
     {
         $request = $this->getRequest();
-        $em = $this->getDoctrine()->getManager();
 
         $contentId = (int)$request->request->get('contentId');
         $score = (float)$request->request->get('score');
 
-//        try {
-            $starrating = $this->get('ideato_starrating_service');
-            $average = $starrating->save( $contentId, $score );
-//        } catch( Exception\NotFoundException $e ) {
-//            $average = -1;
-//        } catch( Exception\InvalidArgumentException $e ) {
-//            $average = -1;
-//        }
+        $starrating = $this->get('ideato_starrating_service');
+        $average = $starrating->save( $contentId, $score );
 
         $response = new Response();
         return $response->setContent($average);

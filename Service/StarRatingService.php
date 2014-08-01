@@ -79,14 +79,6 @@ class StarRatingService {
      */
     public function saveNewScore( $contentId, $score )
     {
-        if( !$contentId ) {
-            throw new Exception\InvalidArgumentException('$contentId not provided');
-        }
-
-        if( !$score ) {
-            throw new Exception\InvalidArgumentException('$score value not provided');
-        }
-
         if( $score < 0 || $score > 5 ) {
             throw new Exception\InvalidArgumentException('$score value not valid. Valid values are between 0 and 5');
         }
@@ -113,14 +105,6 @@ class StarRatingService {
      */
     public function updateScore( $contentId, $score )
     {
-        if( !$contentId ) {
-            throw new Exception\InvalidArgumentException('$contentId not provided');
-        }
-
-        if( !$score ) {
-            throw new Exception\InvalidArgumentException('$score value not provided');
-        }
-
         if( $score < 0 || $score > 5 ) {
             throw new Exception\InvalidArgumentException('$score value not valid. Valid values are between 0 and 5');
         }

@@ -31,7 +31,7 @@ class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
 
         $this->doctrine = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
-            ->setMethods( array('getRepository', 'persist', 'commit') )
+            ->setMethods( array('getRepository', 'persist', 'flush') )
             ->getMock();
     }
 
@@ -60,17 +60,42 @@ class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Test load() method
+     *
+     * @expectedException \Exception
+     */
+    public function testLoadException()
+    {
+        $id = 7701;
+
+        $this->repository->expects($this->atLeastOnce())
+                ->method('find')
+                ->with($id)
+                ->will($this->throwException( new \Exception() ));
+
+        $this->doctrine->expects($this->atLeastOnce())
+                ->method('getRepository')
+                ->with('IdeatoStarRatingBundle:Rating')
+                ->will($this->returnValue( $this->repository ));
+
+        $starrating = new StarRatingService( $this->doctrine );
+        $starrating->load($id);
+    }
+
+    /**
      * Test getAverage() method
      */
     public function testGetAverage()
     {
         $id = 7700;
-        $object = new Rating();
+        $score = 5;
 
-        $this->repository->expects($this->atLeastOnce())
-            ->method('find')
-            ->with($id)
-            ->will($this->returnValue( $object ));
+        $object = $this->expectedRating( $id, $score );
+
+        $this->repository->expects( $this->once() )
+                ->method('find')
+                ->with( $id )
+                ->will( $this->returnValue( $object ) );
 
         $this->doctrine->expects($this->atLeastOnce())
             ->method('getRepository')
@@ -78,9 +103,55 @@ class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
             ->will($this->returnValue( $this->repository ));
 
         $starrating = new StarRatingService( $this->doctrine );
-        $average = $starrating->getAverage($id);
+        $average = $starrating->getAverage( $id );
 
-        $this->assertEquals( null, $average );
+        $this->assertEquals( 5, $average );
+    }
+
+    /**
+     * Test getAverage() method
+     */
+    public function testGetAverageShouldReturn0WhenNotFoundExceptionIsThrown()
+    {
+        $id = 7701;
+
+        $this->repository->expects( $this->once() )
+                ->method('find')
+                ->with( $id )
+                ->will( $this->returnValue(null) );
+
+        $this->doctrine->expects($this->atLeastOnce())
+            ->method('getRepository')
+            ->with('IdeatoStarRatingBundle:Rating')
+            ->will($this->returnValue( $this->repository ));
+
+        $starrating = new StarRatingService( $this->doctrine );
+        $average = $starrating->getAverage( $id );
+
+        $this->assertEquals( 0.0, $average );
+    }
+
+    /**
+     * Test getAverage() method
+     *
+     * @expectedException \Exception
+     */
+    public function testGetAverageException()
+    {
+        $id = 7701;
+
+        $this->repository->expects( $this->once() )
+                ->method('find')
+                ->with( $id )
+                ->will( $this->throwException( new \Exception() ) );
+
+        $this->doctrine->expects($this->atLeastOnce())
+            ->method('getRepository')
+            ->with('IdeatoStarRatingBundle:Rating')
+            ->will($this->returnValue( $this->repository ));
+
+        $starrating = new StarRatingService( $this->doctrine );
+        $starrating->getAverage( $id );
     }
 
     /**
@@ -93,10 +164,12 @@ class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
 
         $object = $this->expectedRating( $id, $score );
 
-        $this->doctrine->expects($this->atLeastOnce())
+        $this->doctrine->expects($this->once())
             ->method('persist')
-            ->with( $object )
-            ->will($this->returnValue( $object ));
+            ->with( $object );
+
+        $this->doctrine->expects($this->once())
+            ->method('flush');
 
         $starrating = new StarRatingService( $this->doctrine );
         $rating = $starrating->saveNewScore($id, $score);
@@ -104,15 +177,71 @@ class StarRatingServiceTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals( $object, $rating );
     }
 
+    /**
+     * Test updateScore() method
+     */
+    public function testUpdateScore()
+    {
+        $id = 7700;
+        $score = 5;
+
+        $object = $this->expectedRating( $id, $score, 5, 1 );
+
+        $this->repository->expects( $this->once() )
+            ->method('find')
+            ->with( $id )
+            ->will( $this->returnValue($object) );
+
+        $this->doctrine->expects($this->atLeastOnce())
+            ->method('getRepository')
+            ->with('IdeatoStarRatingBundle:Rating')
+            ->will($this->returnValue( $this->repository ));
+
+        $this->doctrine->expects($this->once())
+            ->method('flush');
+
+        $starrating = new StarRatingService( $this->doctrine );
+        $rating = $starrating->updateScore($id, $score);
+
+        $this->assertEquals( $object, $rating );
+    }
+
+    /**
+     * Test updateScore() method
+     *
+     * @expectedException \Exception
+     */
+    public function testUpdateScoreException()
+    {
+        $id = 7701;
+        $score = 5;
+
+        $object = $this->expectedRating( $id, $score, 5, 1 );
+
+        $this->repository->expects( $this->once() )
+            ->method('find')
+            ->with( $id )
+            ->will( $this->throwException( new \Exception() ) );
+
+        $this->doctrine->expects($this->atLeastOnce())
+            ->method('getRepository')
+            ->with('IdeatoStarRatingBundle:Rating')
+            ->will($this->returnValue( $this->repository ));
+
+        $starrating = new StarRatingService( $this->doctrine );
+        $starrating->updateScore($id, $score);
+    }
 
 
+    protected function expectedRating( $id, $score, $totalcount = 0, $count = 0 ){
+        $totalcount = $totalcount + $score;
+        $average = $totalcount / ++$count;
 
-    protected function expectedRating( $id, $score ){
         $rating = new Rating();
         $rating->setId( $id );
-        $rating->setTotalcount( $score );
-        $rating->setAverage( $score );
-        $rating->setCount( 1 );
+        $rating->setAverage( $average );
+        $rating->setTotalcount( $totalcount );
+        $rating->setCount( $count );
 
         return $rating;
     }
