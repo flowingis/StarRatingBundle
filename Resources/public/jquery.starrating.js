@@ -16,6 +16,7 @@ jQuery(function($){
             $.post( url, data)
                 .done(function(result){
                     t.raty('score', result);
+                    t.trigger('isr-rated', { score: score, average: result });
                 })
                 .fail(function(){
                     alert('An error occurred. Please try again');
