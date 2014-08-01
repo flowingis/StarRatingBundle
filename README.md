@@ -1,7 +1,13 @@
 StarRatingBundle
 ================
 
-**StarRatingBundle** is a Symfony Bundle for easy star rating system.
+**StarRatingBundle** is a Symfony Bundle for easy star rating system. **StarRatingBundle** can be used with your own Javascript library but it also includes [jQuery Raty](https://github.com/wbotelhos/raty) plugin if you'd like to install and use the bundle as-it-is. 
+
+
+
+
+
+
 
 ## Installation
 
@@ -13,9 +19,6 @@ StarRatingBundle
         bundles:        [ IdeatoStarRatingBundle ]
 
 * Add js and css
-*
-
-
 
 
 ## TODO
@@ -24,7 +27,3 @@ StarRatingBundle
 * Prevent multiple vote
 
 
-## TODO SIMONE
-- test
-X eccezioni
-- gestire meglio js/controller
