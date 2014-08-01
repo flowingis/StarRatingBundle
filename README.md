@@ -74,7 +74,8 @@ If you chose to use the jQuery plugin included, you simply need to render the st
 			})
 		) }}
 
-	You just need to customize the `contentId` param according to the id of your element. The controller automatically will render the rating stars with the current score enabled. 
+	
+You just need to customize the `contentId` param according to the id of your element. The controller automatically will render the rating stars with the current score enabled. 
 	Something like the following screenshot:
 	
 ![](Resources/doc/starrating.png)
